@@ -1,0 +1,489 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <windows.h>
+
+void setTextColor(int color) {
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color | BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED | BACKGROUND_INTENSITY);
+}
+
+
+struct Veiculo {
+    char placa[20];
+    char modelo[50];
+    int alugado;  // Nova variável para rastrear se o veículo está alugado
+};
+
+struct Motorista {
+    char nome[50];
+    int idade;
+};
+
+struct Rota {
+    char nome[50];
+    float distancia;
+};
+
+struct Aluguel {
+    char placaVeiculo[20];
+    char nomeMotorista[50];
+    char nomeRota[50];
+    float valor;  // Valor do aluguel
+};
+
+// FUNÇÃO para cadastrar os veiculos
+void cadastrarVeiculo(struct Veiculo *veiculos, int *quantidadeVeiculos) {
+	setTextColor(0x01);
+    printf("Digite a placa do veiculo: ");
+    scanf("%s", veiculos[*quantidadeVeiculos].placa);
+    printf("Digite o modelo do veiculo: ");
+    scanf("%s", veiculos[*quantidadeVeiculos].modelo);
+     setTextColor(0x0F);
+    veiculos[*quantidadeVeiculos].alugado = 0;  // Inicialmente, o veículo não está alugado
+    (*quantidadeVeiculos)++;
+    
+    setTextColor(10);
+    printf("Veiculo cadastrado com sucesso!\n");
+    setTextColor(15);
+}
+
+// Função para cadastrar um motorista
+void cadastrarMotorista(struct Motorista *motoristas, int *quantidadeMotoristas) {
+	setTextColor(0x01);
+    printf("Digite o nome do motorista: ");
+    scanf("%s", motoristas[*quantidadeMotoristas].nome);
+    setTextColor(0x0F);
+
+    // Verifica a idade do motorista
+    do {
+    	setTextColor(0x01);
+        printf("Digite a idade do motorista: ");
+        scanf("%d", &motoristas[*quantidadeMotoristas].idade);
+        setTextColor(0x0F);
+
+        // Verifica se o motorista tem mais de 18 anos
+        if (motoristas[*quantidadeMotoristas].idade < 18) {
+        	setTextColor(0x01);
+            printf("O motorista deve ter mais de 18 anos de idade. Por favor, insira uma idade valida.\n");
+            setTextColor(0x0F);
+        }
+        
+    } while (motoristas[*quantidadeMotoristas].idade < 18);
+
+    (*quantidadeMotoristas)++;
+    
+    setTextColor(10);
+    printf("Motorista cadastrado com sucesso.\n");
+    setTextColor(15);
+}
+
+void cadastrarRota(struct Rota *rotas, int *quantidadeRotas) {
+	setTextColor(0x01);
+    printf("Digite o nome da rota: ");
+    scanf("%s", rotas[*quantidadeRotas].nome);
+    setTextColor(0x0F);
+    
+    setTextColor(0x01);
+    printf("Digite a distancia da rota: ");
+    scanf("%f", &rotas[*quantidadeRotas].distancia);
+    setTextColor(0x0F);
+    (*quantidadeRotas)++;
+    
+    setTextColor(10);
+    printf("Rota cadastrada com sucesso!\n");
+    setTextColor(15);
+}
+
+void editarVeiculo(struct Veiculo *veiculos, int quantidadeVeiculos) {
+    char placaEdit[20];
+     setTextColor(0x01);
+    printf("Digite a placa do veiculo a ser editado: ");
+    scanf("%s", placaEdit);
+    setTextColor(0x0F);
+
+    int i = 0;
+    while (i < quantidadeVeiculos && strcmp(veiculos[i].placa, placaEdit) != 0) {
+        i++;
+    }
+
+    if (i < quantidadeVeiculos) {
+    	setTextColor(0x01);
+        printf("Digite a nova placa do veiculo: ");
+        scanf("%s", veiculos[i].placa);
+        setTextColor(0x0F);
+        
+        setTextColor(0x01);
+        printf("Digite o novo modelo do veiculo: ");
+        scanf("%s", veiculos[i].modelo);
+        setTextColor(0x0F);
+        
+        setTextColor(10);
+        printf("Veiculo editado com sucesso.\n");
+        setTextColor(15);
+    } else {
+    	setTextColor(0x01);
+        printf("Veiculo não encontrado.\n");
+     	setTextColor(0x0F);   
+    }
+}
+void editarMotorista(struct Motorista *motoristas, int quantidadeMotoristas) {
+    char nomeEdit[50];
+    setTextColor(0x01);
+    printf("Digite o nome do motorista a ser editado: ");
+    scanf("%s", nomeEdit);
+    setTextColor(0x0F);
+
+    int i = 0;
+    while (i < quantidadeMotoristas && strcmp(motoristas[i].nome, nomeEdit) != 0) {
+        i++;
+    }
+
+    if (i < quantidadeMotoristas) {
+    	setTextColor(0x01);
+        printf("Digite a nova idade do motorista: ");
+        int novaIdade;
+        scanf("%d", &novaIdade);
+		setTextColor(0x0F);
+        if (novaIdade >= 18) {
+            motoristas[i].idade = novaIdade;
+            setTextColor(10);
+            printf("Motorista editado com sucesso.\n");
+            setTextColor(15);
+        } else {
+        	setTextColor(0x01);
+            printf("Idade deve ser igual ou superior a 18 anos. Edição cancelada.\n");
+            setTextColor(0x0F);
+        }
+    } else {
+    	setTextColor(0x01);
+        printf("Motorista nao encontrado.\n");
+        setTextColor(0x0F);
+    }
+}
+void editarRota(struct Rota *rotas, int quantidadeRotas) {
+    char nomeEdit[50];
+    setTextColor(0x01);
+    printf("Digite o nome da rota a ser editada: ");
+    scanf("%s", nomeEdit);
+	setTextColor(0x0F);
+    int i = 0;
+    while (i < quantidadeRotas && strcmp(rotas[i].nome, nomeEdit) != 0) {
+        i++;
+    }
+
+    if (i < quantidadeRotas) {
+    	setTextColor(0x01);
+        printf("Digite o novo nome da rota: ");
+        scanf("%s", rotas[i].nome);
+        printf("Digite a nova distancia da rota: ");
+        scanf("%f", &rotas[i].distancia);
+        setTextColor(0x0F);
+        setTextColor(10);
+        printf("Rota editada com sucesso.\n");
+        setTextColor(15);
+    } else {
+    	setTextColor(0x01);
+        printf("Rota nao encontrada.\n");
+        setTextColor(0x0F);
+    }
+}
+void excluirVeiculo(struct Veiculo *veiculos, int *quantidadeVeiculos) {
+
+    char placaExcluir[20];
+    setTextColor(0x01);
+    printf("Digite a placa do veiculo a ser excluido: ");
+    scanf("%s", placaExcluir);
+	setTextColor(0x0F);
+    int i = 0;
+    while (i < *quantidadeVeiculos && strcmp(veiculos[i].placa, placaExcluir) != 0) {
+        i++;
+    }
+
+    if (i < *quantidadeVeiculos) {
+        // Move o último veículo para a posição a ser excluída
+        veiculos[i] = veiculos[(*quantidadeVeiculos) - 1];
+        (*quantidadeVeiculos)--;
+        setTextColor(10);
+        printf("Veiculo excluido com sucesso.\n");
+        setTextColor(15);
+    } else {
+    	setTextColor(0x01);
+        printf("Veiculo nao encontrado.\n");
+        setTextColor(0x0F);
+    }
+}
+void excluirMotorista(struct Motorista *motoristas, int *quantidadeMotoristas) {
+
+    char nomeExcluir[50];
+    setTextColor(0x01);
+    printf("Digite o nome do motorista a ser excluido: ");
+    scanf("%s", nomeExcluir);
+    setTextColor(0x0F);
+
+    int i = 0;
+    while (i < *quantidadeMotoristas && strcmp(motoristas[i].nome, nomeExcluir) != 0) {
+        i++;
+    }
+
+    if (i < *quantidadeMotoristas) {
+        // Move o último motorista para a posição a ser excluída
+        motoristas[i] = motoristas[(*quantidadeMotoristas) - 1];
+        (*quantidadeMotoristas)--;
+        setTextColor(10);
+        printf("Motorista excluido com sucesso.\n");
+        setTextColor(15);
+    } else {
+    	setTextColor(0x01);
+        printf("Motorista nao encontrado.\n");
+        setTextColor(0x0F);
+    }
+}
+void excluirRota(struct Rota *rotas, int *quantidadeRotas) {
+
+    char nomeExcluir[50];
+    setTextColor(0x01);
+    printf("Digite o nome da rota a ser excluida: ");
+    scanf("%s", nomeExcluir);
+	setTextColor(0x0F);
+    int i = 0;
+    while (i < *quantidadeRotas && strcmp(rotas[i].nome, nomeExcluir) != 0) {
+        i++;
+    }
+
+    if (i < *quantidadeRotas) {
+        // Move a última rota para a posição a ser excluída
+        rotas[i] = rotas[(*quantidadeRotas) - 1];
+        (*quantidadeRotas)--;
+        setTextColor(10);
+        printf("Rota excluida com sucesso.\n");
+        setTextColor(15);
+    } else {
+    	setTextColor(0x01);
+        printf("Rota não encontrada.\n");
+        setTextColor(0x0F);
+    }
+}
+void alugarVeiculo(struct Veiculo *veiculos, int quantidadeVeiculos, struct Motorista *motoristas, int quantidadeMotoristas, struct Rota *rotas, int quantidadeRotas, struct Aluguel *alugueis, int *quantidadeAlugueis) {
+    char placaVeiculo[20];
+    char nomeMotorista[50];
+    char nomeRota[50];
+	
+	setTextColor(0x01);
+    printf("Digite a placa do veiculo a ser alugado: ");
+    scanf("%s", placaVeiculo);
+	setTextColor(0x0F);
+    int i = 0;
+    while (i < quantidadeVeiculos && strcmp(veiculos[i].placa, placaVeiculo) != 0) {
+        i++;
+    }
+
+    if (i < quantidadeVeiculos && !veiculos[i].alugado) {
+    	setTextColor(0x01);
+        printf("Digite o nome do motorista: ");
+        scanf("%s", nomeMotorista);
+
+        printf("Digite o nome da rota: ");
+        scanf("%s", nomeRota);
+		setTextColor(0x0F);
+        int j = 0;
+        while (j < quantidadeRotas && strcmp(rotas[j].nome, nomeRota) != 0) {
+            j++;
+        }
+
+        if (j < quantidadeRotas) {
+            // Registre o aluguel
+            strcpy(alugueis[*quantidadeAlugueis].placaVeiculo, placaVeiculo);
+            strcpy(alugueis[*quantidadeAlugueis].nomeMotorista, nomeMotorista);
+            strcpy(alugueis[*quantidadeAlugueis].nomeRota, nomeRota);
+
+            // Calcule o valor do aluguel (exemplo: 1000 kz por km)
+            alugueis[*quantidadeAlugueis].valor = rotas[j].distancia * 1000;
+
+            (*quantidadeAlugueis)++;
+
+            // Marque o veículo como alugado
+            veiculos[i].alugado = 1;
+			
+			setTextColor(10);
+            printf("\nVeiculo alugado com sucesso\n");
+            setTextColor(15);
+            setTextColor(0x01);
+            printf("Placa do veiculo: %s\n", alugueis[*quantidadeAlugueis - 1].placaVeiculo);
+            printf("Nome do motorista: %s\n", alugueis[*quantidadeAlugueis - 1].nomeMotorista);
+            printf("Nome da rota: %s\n", alugueis[*quantidadeAlugueis - 1].nomeRota);
+            printf("Distancia da rota: %.2f km\n", rotas[j].distancia);
+            printf("Valor do aluguel: kz %.2f\n", alugueis[*quantidadeAlugueis - 1].valor);
+        } else {
+            printf("Rota não encontrada.\n");
+        }
+    } else if (i < quantidadeVeiculos && veiculos[i].alugado) {
+        printf("Veiculo ja alugado.\n");
+    } else {
+        printf("Veiculo não encontrado ou ja alugado.\n");
+    }
+    setTextColor(0x0F);
+}
+
+// Função para exibir o status dos cadastros
+void exibirStatus(struct Veiculo *veiculos, int quantidadeVeiculos, struct Motorista *motoristas, int quantidadeMotoristas, struct Rota *rotas, int quantidadeRotas) {
+	setTextColor(0x01);   
+    printf("\nStatus dos Cadastros:\n");
+
+    if (quantidadeMotoristas == 0 && quantidadeVeiculos == 0 && quantidadeRotas == 0) {
+        printf("\nNenhum cadastro realizado.\n");
+        return;
+    }
+
+    if (quantidadeMotoristas == 0) {
+        printf("\nNenhum motorista cadastrado.\n");
+    } else {
+        printf("\nMotoristas Cadastrados:\n");
+        int i = 0;
+        while (i < quantidadeMotoristas) {
+            printf("%d. Motorista: %s, Idade: %d\n", i + 1, motoristas[i].nome, motoristas[i].idade);
+            i++;
+        }
+    }
+
+    if (quantidadeVeiculos == 0) {
+        printf("\nNenhum veiculo cadastrado.\n");
+    } else {
+        printf("\nVeiculos Cadastrados:\n");
+        int i = 0;
+        while (i < quantidadeVeiculos) {
+            printf("%d. Placa: %s, Modelo: %s, Alugado: %s\n", i + 1, veiculos[i].placa, veiculos[i].modelo, veiculos[i].alugado ? "Sim" : "Nao");
+            i++;
+        }
+    }
+
+    if (quantidadeRotas == 0) {
+        printf("\nNenhuma rota cadastrada.\n");
+    } else {
+        printf("\nRotas Cadastradas:\n");
+        int i = 0;
+        while (i < quantidadeRotas) {
+            printf("%d. Rota: %s, Distancia: %.2f km\n", i + 1, rotas[i].nome, rotas[i].distancia);
+            i++;
+        }
+    }
+    setTextColor(0x0F);
+}
+void gerarFatura(struct Veiculo *veiculos, int quantidadeVeiculos, struct Rota *rotas, int quantidadeRotas, struct Aluguel *alugueis, int quantidadeAlugueis) {
+    setTextColor(0x01);
+	if (quantidadeAlugueis == 0) {
+        printf("\nNenhum aluguel cadastrado. Nao e possível gerar a fatura.\n");
+        return;
+    }
+
+    int i = 0;
+    while (i < quantidadeAlugueis) {
+        printf("\nFatura %d\n", i + 1);
+        printf("|Placa do veiculo: %s         \n", alugueis[i].placaVeiculo);
+        printf("|Nome do motorista: %s        \n", alugueis[i].nomeMotorista);
+        
+        int j = 0;
+        while (j < quantidadeRotas && strcmp(rotas[j].nome, alugueis[i].nomeRota) != 0) {
+            j++;
+        }
+        
+        if (j < quantidadeRotas) {
+            printf("|Nome da rota: %s              \n", rotas[j].nome);
+            printf("|Distancia da rota: %.2f km   \n", rotas[j].distancia);
+        } else {
+            printf("Rota não encontrada.\n");
+        }
+
+        printf("|Valor do aluguel: kz %.2f  \n", alugueis[i].valor);
+        i++;
+    }
+     setTextColor(0x0F);
+}
+
+void limparTela() {
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
+}
+
+int main() {
+	system("color F0");
+    struct Veiculo veiculos[100];
+    struct Motorista motoristas[100];
+    struct Rota rotas[100];
+    struct Aluguel alugueis[100];
+
+    int quantidadeVeiculos = 0;
+    int quantidadeMotoristas = 0;
+    int quantidadeRotas = 0;
+    int quantidadeAlugueis = 0;
+
+    int escolha;
+
+    do {
+        setTextColor(9);
+        
+        printf("|=========menu=========|\n|1. Cadastrar Veiculo  |\n|2. Cadastrar Motorista|\n|3. Cadastrar Rota     |\n");
+        printf("|4. Editar Veiculo     |\n|5. Editar Motorista   |\n|6. Editar Rota        |\n");
+        printf("|7. Excluir Veiculo    |\n|8. Excluir Motorista  |\n|9. Excluir Rota       |\n");
+        printf("|10. Alugar Veiculo    |\n|11. Gerar Fatura      |\n|12. Exibir Status     |\n|0. Sair               |\n");
+        printf("|======================|\n");
+        printf("Digite sua escolha: ");
+        scanf("%d", &escolha);
+        
+        setTextColor(15);
+        
+        limparTela();
+
+        switch (escolha) {
+            case 1:
+                cadastrarVeiculo(veiculos, &quantidadeVeiculos);
+                break;
+            case 2:
+                cadastrarMotorista(motoristas, &quantidadeMotoristas);
+                break;
+            case 3:
+                cadastrarRota(rotas, &quantidadeRotas);
+                break;
+            case 4:
+                editarVeiculo(veiculos, quantidadeVeiculos);
+                break;
+            case 5:
+                editarMotorista(motoristas, quantidadeMotoristas);
+                break;
+            case 6:
+                editarRota(rotas, quantidadeRotas);
+                break;
+            case 7:
+                excluirVeiculo(veiculos, &quantidadeVeiculos);
+                break;
+            case 8:
+                excluirMotorista(motoristas, &quantidadeMotoristas);
+                break;
+            case 9:
+                excluirRota(rotas, &quantidadeRotas);
+                break;
+            case 10:
+                alugarVeiculo(veiculos, quantidadeVeiculos, motoristas, quantidadeMotoristas, rotas, quantidadeRotas, alugueis, &quantidadeAlugueis);
+                break;
+            case 11:
+                gerarFatura(veiculos, quantidadeVeiculos, rotas, quantidadeRotas, alugueis, quantidadeAlugueis);
+                break;
+            case 12:
+            	exibirStatus(veiculos, quantidadeVeiculos, motoristas, quantidadeMotoristas, rotas, quantidadeRotas);
+            	break;
+            case 0:
+                printf("Encerrando o programa.\n");
+                break;
+            default:
+                printf("Escolha inválida. Por favor, tente novamente.\n");
+        }
+    } while (escolha != 0);
+
+    setTextColor(FOREGROUND_BLUE); // Define a cor do texto para azul
+    printf("Reinicie o programa! digite um numero,obrigado.\n");
+    setTextColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+    
+    return 0;
+    }
